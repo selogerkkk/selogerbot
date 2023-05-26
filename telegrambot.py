@@ -46,48 +46,15 @@ def process_message_without_filter(message):
         sender_name = message['from']['first_name']
         # Extrai o conteúdo da mensagem
         text = message['text']
+        print(f"Texto da mensagem: {text}")
+
         # Imprime o conteúdo da mensagem
         print(f"{sender_name}: {text}")
     else:
         print("Mensagem enviada não é um texto!")
 
 
-# Função para processar a mensagem recebida TRADE
 def process_message(message):
-    # Verifica se a mensagem contém texto
-    if 'text' in message:
-        # Extrai o nome do remetente
-        sender_name = message['from']['first_name']
-        # Extrai o conteúdo da mensagem
-        text = message['text']
-        
-        # Verifica se a mensagem contém o padrão específico
-        if "✅🔥 TRADERZISMO FREE 🔥✅" in text:
-            # Procura um padrão específico na mensagem usando expressões regulares
-            pattern = r"📊 ([^\n]+)\n(🔴 PUT|🟢 CALL)?\n⚠️ Operar (AGORA|\d{2}:\d{2}|\d{2}:\d{2}) ⚠️"
-            match = re.search(pattern, text)
-            
-            # Verifica se o padrão foi encontrado
-            if match:
-                # Extrai as informações desejadas
-                par = match.group(1).strip()
-                direcao = match.group(2).strip() if match.group(2) else "N/A"
-                horario = match.group(3).strip()
-                
-                # Se o horário for "AGORA", substitui pelo horário da mensagem
-                if horario == "AGORA":
-                    horario = "horário da mensagem"
-                
-                # Imprime as informações com o nome do remetente
-                print(f"Mensagem recebida de {sender_name}:")
-                print(f"Par: {par}")
-                print(f"Direção: {direcao}")
-                print(f"Horário: {horario}")
-            else:
-                print("Padrão não encontrado na mensagem.")
-        else:
-            print("Mensagem não contém o padrão esperado.")
-
     # Verifica se a mensagem contém texto
     if 'text' in message:
         # Extrai o nome do remetente
@@ -106,37 +73,7 @@ def process_message(message):
                 # Extrai as informações desejadas
                 par = match.group(1).strip()
                 direcao = match.group(2).strip() if match.group(2) else "N/A"
-                horario = match.group(3).strip() if match.group(3) != "AGORA" else "horário da mensagem"
-                
-                # Imprime as informações com o nome do remetente
-                print(f"Mensagem recebida de {sender_name}:")
-                print(f"Par: {par}")
-                print(f"Direção: {direcao}")
-                print(f"Horário: {horario}")
-            else:
-                print("Padrão não encontrado na mensagem.")
-        else:
-            print("Mensagem não contém o padrão esperado.")
-    # Verifica se a mensagem contém texto
-    if 'text' in message:
-        # Extrai o nome do remetente
-        sender_name = message['from']['first_name']
-        # Extrai o conteúdo da mensagem
-        text = message['text']
-        
-        # Verifica se a mensagem contém o padrão específico
-        if " ✅🔥 TRADERZISMO FREE 🔥✅" in text:
-            # Procura um padrão específico na mensagem usando expressões regulares
-            pattern = r"📊 ([^\n]+)\n(🔴PUT|🟢 CALL)?\n⚠️ Operar (AGORA|\das (\d{2}:\d{2}))"
-            match = re.search(pattern, text)
-            
-            # Verifica se o padrão foi encontrado
-            if match:
-                # Extrai as informações desejadas
-                par = match.group(1).strip()
-                direcao = match.group(2).strip() if match.group(2) else "N/A"
-                horario = match.group(3).strip() if match.group(3) != "AGORA" else "horário da mensagem"
-                
+                horario = match.group(3).strip() if match.group(3) != "AGORA" else  datetime.datetime.now().strftime("%H:%M")
                 # Imprime as informações com o nome do remetente
                 print(f"Mensagem recebida de {sender_name}:")
                 print(f"Par: {par}")
