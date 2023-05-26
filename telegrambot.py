@@ -7,7 +7,6 @@ load_dotenv()
 
 API_TOKEN = os.getenv('API_TOKEN')
 CHAT_ID = os.getenv('CHAT_ID')
-# Função para obter as atualizações do Telegram
 
 
 def get_updates():
@@ -15,8 +14,6 @@ def get_updates():
     response = requests.get(url)
     data = response.json()
     return data
-
-# Função para enviar uma mensagem para o Telegram
 
 
 def send_message(text):
@@ -30,30 +27,18 @@ def send_message(text):
             f"Erro ao enviar a mensagem: {response.status_code} - {response.text}")
         return None
 
-# Função para executar a ação desejada
-
 
 def perform_action():
-    # Coloque sua ação aqui
-    # Exemplo: enviar uma mensagem para o grupo
     send_message("Mensagem lida!")
-
-# Função para controlar a ação
-
-# Função para processar a mensagem recebida
 
 
 def process_message(message):
     if 'text' in message:
-        # Extrai o nome do remetente
         sender_name = message['from']['first_name']
-        # Extrai o conteúdo da mensagem
         text = message['text']
-        # Imprime o conteúdo da mensagem
         print(f"{sender_name}: {text}")
     else:
         print("Mensagem enviada não é um texto!")
-# Função para controlar a ação
 
 
 def control_action():
@@ -73,5 +58,4 @@ def control_action():
         time.sleep(1)
 
 
-# Iniciar o controle da ação
 control_action()
