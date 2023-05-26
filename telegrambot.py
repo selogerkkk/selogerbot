@@ -1,9 +1,12 @@
+import os
 import requests
 import time
+from dotenv import load_dotenv
 
-API_TOKEN = '6184059120:AAG_l2CjEchcrHatL8Jzb1u3Ott-WPEgcqA'
-CHAT_ID = '726897147'
+load_dotenv()
 
+API_TOKEN = os.getenv('API_TOKEN')
+CHAT_ID = os.getenv('CHAT_ID')
 # Função para obter as atualizações do Telegram
 
 
