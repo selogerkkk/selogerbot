@@ -61,6 +61,8 @@ def process_message(message):
         sender_name = message['from']['first_name']
         # Extrai o conteúdo da mensagem
         text = message['text']
+        print(f"Texto da mensagem:\n {text}\n\n")
+
         
         # Verifica se a mensagem contém o padrão específico
         if "✅🔥 TRADERZISMO FREE 🔥✅" in text:
