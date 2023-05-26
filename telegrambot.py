@@ -63,11 +63,10 @@ def process_message(message):
         text = message['text']
         print(f"Texto da mensagem:\n {text}\n\n")
 
-        
         # Verifica se a mensagem contém o padrão específico
         if "✅🔥 TRADERZISMO FREE 🔥✅" in text:
             # Procura um padrão específico na mensagem usando expressões regulares
-            pattern = r"📊 ([^\n]+)\n(🔴 PUT|🟢 CALL)?\n⚠️ Operar (AGORA|\d{2}:\d{2})"
+            pattern = r"📊 ([^\n]+)\n(🔴 PUT|🟢 CALL)?\n⚠️ Operar\s*(?:as)?\s*(\d{2}:\d{2}|\bAGORA\b)"
             match = re.search(pattern, text)
             
             # Verifica se o padrão foi encontrado
