@@ -56,38 +56,35 @@ def process_message_without_filter(message):
 
 def process_message(message):
     # Verifica se a mensagem contém texto
-    if 'text' in message:
+    if 'text' in message:   
         # Extrai o nome do remetente
         sender_name = message['from']['first_name']
         # Extrai o conteúdo da mensagem
         texto = message['text']
         print(f"Texto da mensagem:\n {texto}\n\n")
-        # Encontrar o par (AUDJPY)
+        
+        # Encontrar o par (EURUSD)
         indice_inicio_par = texto.find('📊') + 2
         indice_fim_par = texto.find('\n', indice_inicio_par)
         par = texto[indice_inicio_par:indice_fim_par]
 
-        # Encontrar a direção (CALL ou PUT)
-        palavras_chave_direcao = ['CALL', 'PUT']
-        indice_inicio_direcao = None
-        indice_fim_direcao = None
-        for palavra in palavras_chave_direcao:
-            if palavra in texto:
-                indice_inicio_direcao = texto.find(palavra) + len(palavra) + 1
-                indice_fim_direcao = texto.find('\n', indice_inicio_direcao)
-                break
-
+        # Encontrar a direção (PUT)
+        indice_inicio_direcao = texto.find('🔴') + 2
+        indice_fim_direcao = texto.find('\n', indice_inicio_direcao)
         direcao = texto[indice_inicio_direcao:indice_fim_direcao]
 
-        # Encontrar o horário (10:45)
-        indice_inicio_horario = texto.find('Operar ') + 7
-        indice_fim_horario = texto.find('⚠️', indice_inicio_horario)
+        # Encontrar o horário (Operar AGORA)
+        indice_inicio_horario = texto.find('⚠️ Operar ') + 10
+        indice_fim_horario = texto.find(' ⚠️', indice_inicio_horario)
         horario = texto[indice_inicio_horario:indice_fim_horario]
-        if horario == ' AGORA':
-          horario = datetime.datetime.now().strftime("%H:%M")
+        if horario.upper() == 'AGORA':
+            horario = datetime.datetime.now().strftime("%H:%M")
+
         print("Par:", par)
         print("Direção:", direcao)
-        print("Horário:"    , horario)
+        print("Horário:", horario)
+
+
 
 # Função para não repetir a mensagem
 
