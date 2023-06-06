@@ -2,18 +2,19 @@ import os
 import requests
 import time
 from dotenv import load_dotenv
-import re
 import datetime
-
+from iqoptionapi.stable_api import IQ_Option
 
 load_dotenv()
 
 API_TOKEN = os.getenv('API_TOKEN')
 CHAT_ID = os.getenv('CHAT_ID')
+email = os.getenv('email')
+password = os.getenv('senha')
+
+Iq=IQ_Option("email","password")
 
 # Função para obter as atualizações do Telegram
-
-
 def get_updates():
     url = f'https://api.telegram.org/bot{API_TOKEN}/getUpdates'
     response = requests.get(url)
@@ -57,6 +58,7 @@ def process_message_without_filter(message):
 def process_message(message):
     # Verifica se a mensagem contém texto
     if 'text' in message:   
+        result = {}
         # Extrai o nome do remetente
         sender_name = message['from']['first_name']
         # Extrai o conteúdo da mensagem
@@ -67,11 +69,13 @@ def process_message(message):
         indice_inicio_par = texto.find('📊') + 2
         indice_fim_par = texto.find('\n', indice_inicio_par)
         par = texto[indice_inicio_par:indice_fim_par]
+        result['par']= par
 
         # Encontrar a direção (PUT)
         indice_inicio_direcao = texto.find('🔴') + 2
         indice_fim_direcao = texto.find('\n', indice_inicio_direcao)
         direcao = texto[indice_inicio_direcao:indice_fim_direcao]
+        result['direcao']= direcao
 
         # Encontrar o horário (Operar AGORA)
         indice_inicio_horario = texto.find('⚠️ Operar ') + 10
@@ -79,10 +83,13 @@ def process_message(message):
         horario = texto[indice_inicio_horario:indice_fim_horario]
         if horario.upper() == 'AGORA':
             horario = datetime.datetime.now().strftime("%H:%M")
+        result['horario'] = horario
 
         print("Par:", par)
         print("Direção:", direcao)
         print("Horário:", horario)
+
+   
 
 
 
@@ -100,8 +107,7 @@ def control_action():
                 if last_message_id != action_counter:
                     action_counter = last_message_id
                     process_message(last_message)
-                    perform_action()
-        time.sleep(1)
+                    time.sleep(1)
 
 
 # Iniciar
