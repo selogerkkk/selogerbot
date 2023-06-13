@@ -63,33 +63,47 @@ def process_message(message):
         sender_name = message['from']['first_name']
         # Extrai o conteúdo da mensagem
         texto = message['text']
-        print(f"Texto da mensagem:\n {texto}\n\n")
         
-        # Encontrar o par (EURUSD)
-        indice_inicio_par = texto.find('📊') + 2
-        indice_fim_par = texto.find('\n', indice_inicio_par)
-        par = texto[indice_inicio_par:indice_fim_par]
-        result['par']= par
+        if "✅🔥 TRADERZISMO FREE 🔥✅" in texto:
+            print(f"Texto da mensagem:\n {texto}\n\n")
+            
+            # Encontrar o par (EURUSD)
+            indice_inicio_par = texto.find('📊') + 2
+            indice_fim_par = texto.find('\n', indice_inicio_par)
+            par = texto[indice_inicio_par:indice_fim_par]
+            result['par']= par
 
-        # Encontrar a direção (PUT)
-        indice_inicio_direcao = texto.find('🔴') + 2
-        indice_fim_direcao = texto.find('\n', indice_inicio_direcao)
-        direcao = texto[indice_inicio_direcao:indice_fim_direcao]
-        result['direcao']= direcao
+            # Encontrar a direção (PUT ou CALL)
+            palavras_chave_direcao = {
+                'PUT': '🔴',
+                'CALL': '🟢'
+            }
+            direcao_encontrada = None
+            for direcao, emoji in palavras_chave_direcao.items():
+                if emoji in texto:
+                    indice_inicio_direcao = texto.find(emoji) + 2
+                    indice_fim_direcao = texto.find('\n', indice_inicio_direcao)
+                    direcao_encontrada = direcao
+                    result['direcao'] = direcao_encontrada
+                    break
 
-        # Encontrar o horário (Operar AGORA)
-        indice_inicio_horario = texto.find('⚠️ Operar ') + 10
-        indice_fim_horario = texto.find(' ⚠️', indice_inicio_horario)
-        horario = texto[indice_inicio_horario:indice_fim_horario]
-        if horario.upper() == 'AGORA':
-            horario = datetime.datetime.now().strftime("%H:%M")
-        result['horario'] = horario
+            if not direcao_encontrada:
+                print("Direção não encontrada.")
 
-        print("Par:", par)
-        print("Direção:", direcao)
-        print("Horário:", horario)
+            # Encontrar o horário (Operar AGORA)
+            indice_inicio_horario = texto.find('⚠️ Operar ') + 10
+            indice_fim_horario = texto.find(' ⚠️', indice_inicio_horario)
+            horario = texto[indice_inicio_horario:indice_fim_horario]
+            if horario.upper() == 'AGORA':
+                horario = datetime.datetime.now().strftime("%H:%M")
+            result['horario'] = horario
 
-   
+            print("Par:", par)
+            print("Direção:", direcao)
+            print("Horário:", horario)
+            print('\n')
+
+        
 
 
 
