@@ -4,11 +4,16 @@ import time
 from dotenv import load_dotenv
 import datetime
 from iqoptionapi.stable_api import IQ_Option
+from iqoptionapi.stable_api import IQ_Option
 
 load_dotenv()
 
 API_TOKEN = os.getenv('API_TOKEN')
 CHAT_ID = os.getenv('CHAT_ID')
+email = os.getenv('email')
+password = os.getenv('senha')
+
+Iq=IQ_Option("email","password")
 email = os.getenv('email')
 password = os.getenv('senha')
 
@@ -59,6 +64,8 @@ def process_message(message):
     # Verifica se a mensagem contém texto
     if 'text' in message:   
         result = {}
+    if 'text' in message:   
+        result = {}
         # Extrai o nome do remetente
         sender_name = message['from']['first_name']
         # Extrai o conteúdo da mensagem
@@ -107,6 +114,10 @@ def process_message(message):
 
 
 
+   
+
+
+
 # Função para não repetir a mensagem
 
 def control_action():
@@ -121,6 +132,7 @@ def control_action():
                 if last_message_id != action_counter:
                     action_counter = last_message_id
                     process_message(last_message)
+                    time.sleep(1)
                     time.sleep(1)
 
 
