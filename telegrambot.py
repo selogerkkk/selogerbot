@@ -10,17 +10,13 @@ load_dotenv()
 
 API_TOKEN = os.getenv('API_TOKEN')
 CHAT_ID = os.getenv('CHAT_ID')
-
 # Função para obter as atualizações do Telegram
-
 
 def get_updates():
     url = f'https://api.telegram.org/bot{API_TOKEN}/getUpdates'
     response = requests.get(url)
     data = response.json()
     return data
-
-# Função para enviar uma mensagem para o Telegram
 
 
 def send_message(text):
@@ -42,10 +38,9 @@ def perform_action():
 
 # Função para processar a mensagem recebida sem filtro
 def process_message_without_filter(message):
+def process_message(message):
     if 'text' in message:
-        # Extrai o nome do remetente
         sender_name = message['from']['first_name']
-        # Extrai o conteúdo da mensagem
         text = message['text']
         print(f"Texto da mensagem: {text}")
 
