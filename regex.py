@@ -38,7 +38,6 @@ def perform_action():
 
 # Função para processar a mensagem recebida sem filtro
 def process_message_without_filter(message):
-def process_message(message):
     if 'text' in message:
         sender_name = message['from']['first_name']
         text = message['text']

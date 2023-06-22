@@ -12,16 +12,16 @@ CHAT_ID = os.getenv('CHAT_ID')
 email = os.getenv('email')
 password = os.getenv('senha')
 
-iq=IQ_Option("email","password")
-iq.connect()
-if iq.check_connect == True:
-    print("login failed. retry")
+#bot login
+iq = IQ_Option(email, password)
+check, reason = iq.connect()  # connect to iqoption
+
+if iq.check_connect() == True:
+    print("Conta conectada.")
+    print("Você está na conta:", iq.get_balance_mode())
+    print("Seu saldo é:", iq.get_balance())
 else: 
-    if iq.check_connect == True:
-        print("login successed.")
-
-
-
+    print("Erro ao logar. Tente novamente.")
 
 
 # Função para obter as atualizações do Telegram
@@ -113,9 +113,25 @@ def process_message(message):
             print("Par:", par)
             print("Direção:", direcao)
             print("Horário:", horario)
-            print('\n')
 
-        
+            
+            
+            amount = 2
+            duration =5
+            print('\n') 
+            print('Entrando na operação...')
+            print(iq.buy_digital_spot(par,amount,direcao,duration))
+            id=(iq.buy_digital_spot(par,amount,direcao,duration))
+            print(id)
+            if id != "error":
+                while True:
+                    check,win=iq.check_win_digital_v2(id)
+                    if check==True:
+                        break
+                if win<0:
+                    print("you loss "+str(win)+"$")
+                else:
+                    print("you win "+str(win)+"$")
 
 
 
