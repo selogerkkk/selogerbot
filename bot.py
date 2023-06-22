@@ -4,7 +4,6 @@ import time
 from dotenv import load_dotenv
 import datetime
 from iqoptionapi.stable_api import IQ_Option
-from iqoptionapi.stable_api import IQ_Option
 
 load_dotenv()
 
@@ -13,11 +12,17 @@ CHAT_ID = os.getenv('CHAT_ID')
 email = os.getenv('email')
 password = os.getenv('senha')
 
-Iq=IQ_Option("email","password")
-email = os.getenv('email')
-password = os.getenv('senha')
+iq=IQ_Option("email","password")
+iq.connect()
+if iq.check_connect == True:
+    print("login failed. retry")
+else: 
+    if iq.check_connect == True:
+        print("login successed.")
 
-Iq=IQ_Option("email","password")
+
+
+
 
 # Função para obter as atualizações do Telegram
 def get_updates():
@@ -132,7 +137,6 @@ def control_action():
                 if last_message_id != action_counter:
                     action_counter = last_message_id
                     process_message(last_message)
-                    time.sleep(1)
                     time.sleep(1)
 
 
