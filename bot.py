@@ -46,11 +46,6 @@ def send_message(text):
         return None
 
 
-# Função para enviar mensagem
-def perform_action():
-    send_message("Mensagem lida!")
-
-
 # Função para processar a mensagem recebida sem filtro
 def process_message_without_filter(message):
     if 'text' in message:
@@ -77,7 +72,7 @@ def process_message(message):
         texto = message['text']
         
         if "✅🔥 TRADERZISMO FREE 🔥✅" in texto:
-            print(f"Texto da mensagem:\n {texto}\n\n")
+            #print(f"Texto da mensagem:\n {texto}\n\n")
             
             # Encontrar o par (EURUSD)
             indice_inicio_par = texto.find('📊') + 2
