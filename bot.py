@@ -116,22 +116,13 @@ def process_message(message):
 
             
             
-            amount = 2
-            duration =5
+            amount = 1
+            duration = 1
             print('\n') 
             print('Entrando na operação...')
-            print(iq.buy_digital_spot(par,amount,direcao,duration))
-            id=(iq.buy_digital_spot(par,amount,direcao,duration))
+        
+            _, id=(iq.buy(amount,par,direcao,duration))
             print(id)
-            if id != "error":
-                while True:
-                    check,win=iq.check_win_digital_v2(id)
-                    if check==True:
-                        break
-                if win<0:
-                    print("you loss "+str(win)+"$")
-                else:
-                    print("you win "+str(win)+"$")
 
 
 
