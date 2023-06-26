@@ -18,6 +18,7 @@ check, reason = iq.connect()  # connect to iqoption
 
 if iq.check_connect() == True:
     print("Conta conectada.")
+    print("Bem vindo de volta.")
     print("Você está na conta:", iq.get_balance_mode())
     print("Seu saldo é:", iq.get_balance())
     print("\n")
@@ -118,14 +119,16 @@ def process_message(message):
             ACTION.append(direcao)
             expirations_mode.append(duration)
             
+            # operaçao
             id_list=iq.buy_multi(Money,ACTIVES,ACTION,expirations_mode)
-            print('Entrando na operação...')
-            print("ID da operação:", id_list)
-            print("\n")
             
-
-
-
+            if id_list == [None]:
+                print("Operação falhou.")
+            else:
+                send_message("Entrando na operação...//")
+                print('Entrando na operação...')
+                print("ID da operação:", id_list)
+                print("\n")
 # Função para não repetir a mensagem
 
 def control_action():
