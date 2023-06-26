@@ -20,6 +20,7 @@ if iq.check_connect() == True:
     print("Conta conectada.")
     print("Você está na conta:", iq.get_balance_mode())
     print("Seu saldo é:", iq.get_balance())
+    print("\n")
 else: 
     print("Erro ao logar. Tente novamente.")
 
@@ -108,16 +109,13 @@ def process_message(message):
             print("Par:", par)
             print("Direção:", direcao)
             print("Horário:", horario)
-
-            
-            
+                
             amount = 1
             duration = 1
-            print('\n') 
             print('Entrando na operação...')
-        
             _, id=(iq.buy(amount,par,direcao,duration))
             print(id)
+            print('\n')
 
 
 
