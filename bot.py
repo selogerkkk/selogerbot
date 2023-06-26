@@ -71,7 +71,6 @@ def process_message(message):
         sender_name = message['from']['first_name']
         # Extrai o conteúdo da mensagem
         texto = message['text']
-        
         if "✅🔥 TRADERZISMO FREE 🔥✅" in texto:
             #print(f"Texto da mensagem:\n {texto}\n\n")
             
@@ -105,21 +104,25 @@ def process_message(message):
             if horario.upper() == 'AGORA':
                 horario = datetime.datetime.now().strftime("%H:%M")
             result['horario'] = horario
-
-            print("Par:", par)
-            print("Direção:", direcao)
-            print("Horário:", horario)
-                
+                           
             amount = 1
             duration = 1
+
+            Money=[]
+            ACTIVES=[]
+            ACTION=[]
+            expirations_mode=[]
+
+            Money.append(amount)
+            ACTIVES.append(par)
+            ACTION.append(direcao)
+            expirations_mode.append(duration)
+            
+            id_list=iq.buy_multi(Money,ACTIVES,ACTION,expirations_mode)
             print('Entrando na operação...')
-            _, id=(iq.buy(amount,par,direcao,duration))
-            print(id)
-            print('\n')
-
-
-
-   
+            print("ID da operação:", id_list)
+            print("\n")
+            
 
 
 
