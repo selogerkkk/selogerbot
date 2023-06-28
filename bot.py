@@ -17,12 +17,14 @@ iq = IQ_Option(email, password)
 check, reason = iq.connect()  # connect to iqoption
 
 if iq.check_connect() == True:
+    print(datetime.datetime.now().strftime("%H:%M"))
     print("Conta conectada.")
     print("Bem vindo de volta.")
     print("Você está na conta:", iq.get_balance_mode())
     print("Seu saldo é:", iq.get_balance())
     print("\n")
 else: 
+    print(datetime.datetime.now().strftime("%H:%M"))
     print("Erro ao logar. Tente novamente.")
 
 
@@ -64,8 +66,6 @@ def process_message_without_filter(message):
 
 def process_message(message):
     # Verifica se a mensagem contém texto
-    if 'text' in message:   
-        result = {}
     if 'text' in message:   
         result = {}
         # Extrai o nome do remetente
@@ -123,12 +123,20 @@ def process_message(message):
             id_list=iq.buy_multi(Money,ACTIVES,ACTION,expirations_mode)
             
             if id_list == [None]:
+                print(datetime.datetime.now().strftime("%H:%M"))
+                print(result)
                 print("Operação falhou.")
             else:
                 send_message("Entrando na operação...//")
                 print('Entrando na operação...')
+                print(datetime.datetime.now().strftime("%H:%M"))
+                print(result)
                 print("ID da operação:", id_list)
                 print("\n")
+        else:
+            print(datetime.datetime.now().strftime("%H:%M"))
+            print("Não tá no formato.")
+    
 # Função para não repetir a mensagem
 
 def control_action():
