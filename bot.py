@@ -120,21 +120,27 @@ def process_message(message):
             expirations_mode.append(duration)
             
             # operaçao
-            id_list=iq.buy_multi(Money,ACTIVES,ACTION,expirations_mode)
             
+            id_list=iq.buy_multi(Money,ACTIVES,ACTION,expirations_mode)
             if id_list == [None]:
                 print(datetime.datetime.now().strftime("%H:%M"))
+                print(sender_name)
+                print(texto)
                 print(result)
                 print("Operação falhou.")
             else:
                 send_message("Entrando na operação...//")
                 print('Entrando na operação...')
                 print(datetime.datetime.now().strftime("%H:%M"))
+                print(sender_name)
+                print(texto)
                 print(result)
                 print("ID da operação:", id_list)
                 print("\n")
         else:
             print(datetime.datetime.now().strftime("%H:%M"))
+            print(sender_name)
+            print(texto)
             print("Não tá no formato.")
     
 # Função para não repetir a mensagem
