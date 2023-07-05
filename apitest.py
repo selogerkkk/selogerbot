@@ -1,15 +1,30 @@
+import telebot
 import os
+import requests
+import time
 from dotenv import load_dotenv
+import datetime
 from iqoptionapi.stable_api import IQ_Option
 
-
 load_dotenv()
-email = os.getenv('email')
-password = os.getenv('senha')
 
-iq = IQ_Option(email, password)
-check, reason = iq.connect()  # connect to iqoption
-if iq.check_connect() == True:
-    print("Conta conectada.")
-    print("Você está na conta:", iq.get_balance_mode())
-    print("Seu saldo é:", iq.get_balance())
+TOKEN = os.getenv('API_TOKEN')
+CHAT_ID = os.getenv('CHAT_ID')
+
+
+bot = telebot.TeleBot(TOKEN)
+mensagens = []
+
+
+@bot.message_handler(func=lambda message: True)
+def armazenar_mensagem(message):
+    if message.text not in mensagens:
+        mensagens.append(message.text)
+        print(f"Nova mensagem recebida: {message.text}")
+
+
+while True:
+    try:
+        bot.polling(none_stop=True)
+    except Exception as e:
+        print(f"Erro: {e}")
