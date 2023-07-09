@@ -12,9 +12,9 @@ CHAT_ID = os.getenv('CHAT_ID')
 email = os.getenv('email')
 password = os.getenv('senha')
 
-#bot login
+# bot login
 iq = IQ_Option(email, password)
-check, reason = iq.connect()  #connect to iqoption
+check, reason = iq.connect()  # connect to iqoption
 
 if iq.check_connect() == True:
     print(datetime.datetime.now().strftime("%H:%M"))
@@ -48,7 +48,6 @@ def send_message(text):
         print(
             f"Erro ao enviar a mensagem: {response.status_code} - {response.text}")
         return None
-
 
 
 # Função para processar a mensagem recebida sem filtro
@@ -147,8 +146,9 @@ def process_message(message):
             print(sender_name)
             print(texto)
             print("Não tá no formato.")
-    return result
+
 # Função para não repetir a mensagem
+
 
 def control_action():
     action_counter = 0
@@ -162,7 +162,6 @@ def control_action():
                 if last_message_id != action_counter:
                     action_counter = last_message_id
                     process_message(last_message)
-                    time.sleep(0.2)
 
 
 # Iniciar

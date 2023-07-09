@@ -18,9 +18,8 @@ mensagens = []
 
 @bot.message_handler(func=lambda message: True)
 def armazenar_mensagem(message):
-    if message.text not in mensagens:
-        mensagens.append(message.text)
-        print(f"Nova mensagem recebida: {message.text}")
+    mensagens.append(message.text)
+    print(f"Nova mensagem recebida: {message.text}\n")
 
 
 while True:
