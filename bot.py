@@ -14,7 +14,7 @@ password = os.getenv('senha')
 
 #bot login
 iq = IQ_Option(email, password)
-check, reason = iq.connect()  # connect to iqoption
+check, reason = iq.connect()  #connect to iqoption
 
 if iq.check_connect() == True:
     print(datetime.datetime.now().strftime("%H:%M"))
@@ -23,7 +23,7 @@ if iq.check_connect() == True:
     print("Você está na conta:", iq.get_balance_mode())
     print("Seu saldo é:", iq.get_balance())
     print("\n")
-else: 
+else:
     print(datetime.datetime.now().strftime("%H:%M"))
     print("Erro ao logar. Tente novamente.")
 
@@ -50,7 +50,10 @@ def send_message(text):
         return None
 
 
+
 # Função para processar a mensagem recebida sem filtro
+
+
 def process_message_without_filter(message):
     if 'text' in message:
         # Extrai o nome do remetente
@@ -64,22 +67,23 @@ def process_message_without_filter(message):
     else:
         print("Mensagem enviada não é um texto!")
 
+
 def process_message(message):
     # Verifica se a mensagem contém texto
-    if 'text' in message:   
+    if 'text' in message:
         result = {}
         # Extrai o nome do remetente
         sender_name = message['from']['first_name']
         # Extrai o conteúdo da mensagem
         texto = message['text']
-        if "✅🔥 TRADERZISMO FREE 🔥✅" in texto:
-            #print(f"Texto da mensagem:\n {texto}\n\n")
-            
+        if "TRADERZISMO FREE" in texto:
+            # print(f"Texto da mensagem:\n {texto}\n\n")
+
             # Encontrar o par (EURUSD)
             indice_inicio_par = texto.find('📊') + 2
             indice_fim_par = texto.find('\n', indice_inicio_par)
             par = texto[indice_inicio_par:indice_fim_par]
-            result['par']= par
+            result['par'] = par
 
             # Encontrar a direção (PUT ou CALL)
             palavras_chave_direcao = {
@@ -90,7 +94,8 @@ def process_message(message):
             for direcao, emoji in palavras_chave_direcao.items():
                 if emoji in texto:
                     indice_inicio_direcao = texto.find(emoji) + 2
-                    indice_fim_direcao = texto.find('\n', indice_inicio_direcao)
+                    indice_fim_direcao = texto.find(
+                        '\n', indice_inicio_direcao)
                     direcao_encontrada = direcao
                     result['direcao'] = direcao_encontrada
                     break
@@ -105,23 +110,23 @@ def process_message(message):
             if horario.upper() == 'AGORA':
                 horario = datetime.datetime.now().strftime("%H:%M")
             result['horario'] = horario
-                           
+
             amount = 1
             duration = 1
 
-            Money=[]
-            ACTIVES=[]
-            ACTION=[]
-            expirations_mode=[]
+            Money = []
+            ACTIVES = []
+            ACTION = []
+            expirations_mode = []
 
             Money.append(amount)
             ACTIVES.append(par)
             ACTION.append(direcao)
             expirations_mode.append(duration)
-            
+
             # operaçao
-            
-            id_list=iq.buy_multi(Money,ACTIVES,ACTION,expirations_mode)
+
+            id_list = iq.buy_multi(Money, ACTIVES, ACTION, expirations_mode)
             if id_list == [None]:
                 print(datetime.datetime.now().strftime("%H:%M"))
                 print(sender_name)
@@ -142,7 +147,7 @@ def process_message(message):
             print(sender_name)
             print(texto)
             print("Não tá no formato.")
-    
+    return result
 # Função para não repetir a mensagem
 
 def control_action():
@@ -157,7 +162,7 @@ def control_action():
                 if last_message_id != action_counter:
                     action_counter = last_message_id
                     process_message(last_message)
-                    time.sleep(1)
+                    time.sleep(0.2)
 
 
 # Iniciar
