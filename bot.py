@@ -165,4 +165,5 @@ def control_action():
 
 
 # Iniciar
-control_action()
+# control_action()
+send_message('teste bot')
