@@ -36,8 +36,12 @@ else:
     print("Erro ao logar. Tente novamente.")
 
 
-def check_win_thread(id_list, polling_time):
-    iq.check_win_v2(id_list, polling_time)
+def check_win_thread(id_list):
+    iq.check_win(id_list)
+    iq.check_win_v2(id_list, 2)
+    iq.check_win_v3(id_list)
+    iq.check_win_v4(id_list)
+
 
 def loop_conexao():
     with TelegramClient('session_name', API_ID, API_HASH) as client:
@@ -59,7 +63,7 @@ def loop_conexao():
                     indice_inicio_par = texto.find('📊') + 2
                     indice_fim_par = texto.find('\n', indice_inicio_par)
                     par = texto[indice_inicio_par:indice_fim_par]
-                    result['par'] = par
+                    result['par'] = par.upper()
 
                     # Encontrar a direção (PUT ou CALL)
                     palavras_chave_direcao = {
@@ -81,7 +85,8 @@ def loop_conexao():
 
                     # Encontrar o horário (Operar AGORA)
                     indice_inicio_horario = texto.find('⚠️ Operar ') + 10
-                    indice_fim_horario = texto.find(' ⚠️', indice_inicio_horario)
+                    indice_fim_horario = texto.find(
+                        ' ⚠️', indice_inicio_horario)
                     horario = texto[indice_inicio_horario:indice_fim_horario]
                     if horario.upper() == 'AGORA':
                         horario = datetime.datetime.now().strftime("%H:%M")
@@ -102,32 +107,34 @@ def loop_conexao():
 
                     # operaçao
 
-                    id_list = iq.buy_multi(Money, ACTIVES, ACTION, expirations_mode)
+                    id_list = iq.buy_multi(
+                        Money, ACTIVES, ACTION, expirations_mode)
                     if id_list == [None]:
                         print(datetime.datetime.now().strftime("%H:%M"))
                         print(texto)
                         print(result)
                         print("Operação falhou.")
-                    else: #entra na operaçao
+                        digital = iq.buy_digital_spot_v2(
+                            ACTIVES, Money, ACTION, expirations_mode)
+                    else:  # entra na operaçao
                         print('Entrando na operação...')
                         print(datetime.datetime.now().strftime("%H:%M"))
                         print(result)
-                        print("ID da operação:", id_list)
-                        thread_check_win = threading.Thread(target=check_win_thread, args=(id_list[0],2))
-                        thread_check_win.start()
+                        print("ID da operação:", id_list[0])
+                        iq.check_win_v3(id_list[0])
+                        # thread_check_win = threading.Thread(
+                        #     target=check_win_thread, args=([id_list[0]]))
+                        # thread_check_win.start()
+                        # thread_check_win.join()
+
                         print("\n")
                 else:
                     print(datetime.datetime.now().strftime("%H:%M"))
                     print(texto)
                     print("Não tá no formato.")
 
-
-
-
-
         client.start()
         client.run_until_disconnected()
-
 
 
 def run_loop_conexao():
@@ -139,8 +146,8 @@ def run_loop_conexao():
 thread_conexao = threading.Thread(target=run_loop_conexao)
 thread_conexao.start()
 
+
 def process_message(msg):
     # Verifica se a mensagem contém texto
-    
 
     thread_conexao.join()
