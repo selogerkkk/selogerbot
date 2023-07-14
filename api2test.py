@@ -11,8 +11,8 @@ load_dotenv()
 
 API_ID = '12093312'
 API_HASH = '67926450017650430bfc865ad771523d'
-# CHAT_ID = '-1001474420372'  # traderzismo
-CHAT_ID = '-1001864670859'
+CHAT_ID = '-1001474420372'  # traderzismo
+# CHAT_ID = '-1001864670859'
 
 email = os.getenv('email')
 password = os.getenv('senha')
@@ -51,7 +51,6 @@ def loop_conexao():
             global msg
             if event.is_group and str(event.chat_id) == CHAT_ID:
                 msg = event.message.text
-                print(msg)
 
                 result = {}
 
@@ -63,7 +62,7 @@ def loop_conexao():
                     indice_inicio_par = texto.find('📊') + 2
                     indice_fim_par = texto.find('\n', indice_inicio_par)
                     par = texto[indice_inicio_par:indice_fim_par]
-                    result['par'] = par.upper()
+                    result['par'] = par
 
                     # Encontrar a direção (PUT ou CALL)
                     palavras_chave_direcao = {
@@ -93,7 +92,7 @@ def loop_conexao():
                     result['horario'] = horario
 
                     amount = 1
-                    duration = 1
+                    duration = 15
 
                     Money = []
                     ACTIVES = []
@@ -114,14 +113,14 @@ def loop_conexao():
                         print(texto)
                         print(result)
                         print("Operação falhou.")
-                        digital = iq.buy_digital_spot_v2(
-                            ACTIVES, Money, ACTION, expirations_mode)
+                        # digital = iq.buy_digital_spot(
+                        #     ACTIVES, Money, ACTION, expirations_mode)
                     else:  # entra na operaçao
                         print('Entrando na operação...')
                         print(datetime.datetime.now().strftime("%H:%M"))
                         print(result)
                         print("ID da operação:", id_list[0])
-                        iq.check_win_v3(id_list[0])
+                        # iq.check_win_v3(id_list[0])
                         # thread_check_win = threading.Thread(
                         #     target=check_win_thread, args=([id_list[0]]))
                         # thread_check_win.start()
