@@ -11,8 +11,8 @@ load_dotenv()
 
 API_ID = '12093312'
 API_HASH = '67926450017650430bfc865ad771523d'
-CHAT_ID = '-1001474420372'  # traderzismo
-# CHAT_ID = '-1001864670859'
+# CHAT_ID = '-1001474420372'  # traderzismo
+CHAT_ID = '-1001864670859'
 
 email = os.getenv('email')
 password = os.getenv('senha')
@@ -36,13 +36,6 @@ else:
     print("Erro ao logar. Tente novamente.")
 
 
-def check_win_thread(id_list):
-    iq.check_win(id_list)
-    iq.check_win_v2(id_list, 2)
-    iq.check_win_v3(id_list)
-    iq.check_win_v4(id_list)
-
-
 def loop_conexao():
     with TelegramClient('session_name', API_ID, API_HASH) as client:
         @client.on(events.NewMessage)
@@ -50,11 +43,10 @@ def loop_conexao():
             global mensagem
             global msg
             if event.is_group and str(event.chat_id) == CHAT_ID:
-                msg = event.message.text
+                texto = event.message.text
 
                 result = {}
 
-                texto = msg
                 if "TRADERZISMO FREE" in texto:
                     # print(f"Texto da mensagem:\n {texto}\n\n")
 
@@ -84,15 +76,15 @@ def loop_conexao():
 
                     # Encontrar o horário (Operar AGORA)
                     indice_inicio_horario = texto.find('⚠️ Operar ') + 10
-                    indice_fim_horario = texto.find(
-                        ' ⚠️', indice_inicio_horario)
-                    horario = texto[indice_inicio_horario:indice_fim_horario]
+                    # indice_fim_horario = texto.find('⚠️', indice_inicio_horario)
+                    horario = texto[indice_inicio_horario:(
+                        indice_inicio_horario+5)]
                     if horario.upper() == 'AGORA':
                         horario = datetime.datetime.now().strftime("%H:%M")
                     result['horario'] = horario
 
                     amount = 1
-                    duration = 15
+                    duration = 1
 
                     Money = []
                     ACTIVES = []
@@ -113,19 +105,14 @@ def loop_conexao():
                         print(texto)
                         print(result)
                         print("Operação falhou.")
-                        # digital = iq.buy_digital_spot(
-                        #     ACTIVES, Money, ACTION, expirations_mode)
+                        digital = iq.buy_digital_spot(
+                            ACTIVES[0], Money[0], ACTION[0], expirations_mode[0])
+                        print("ID da operação:", digital)
                     else:  # entra na operaçao
                         print('Entrando na operação...')
                         print(datetime.datetime.now().strftime("%H:%M"))
                         print(result)
                         print("ID da operação:", id_list[0])
-                        # iq.check_win_v3(id_list[0])
-                        # thread_check_win = threading.Thread(
-                        #     target=check_win_thread, args=([id_list[0]]))
-                        # thread_check_win.start()
-                        # thread_check_win.join()
-
                         print("\n")
                 else:
                     print(datetime.datetime.now().strftime("%H:%M"))
@@ -145,8 +132,4 @@ def run_loop_conexao():
 thread_conexao = threading.Thread(target=run_loop_conexao)
 thread_conexao.start()
 
-
-def process_message(msg):
-    # Verifica se a mensagem contém texto
-
-    thread_conexao.join()
+thread_conexao.join()
