@@ -1,3 +1,5 @@
+import sys
+import time
 from telethon.sync import TelegramClient
 from telethon import events
 import threading
@@ -7,7 +9,6 @@ from dotenv import load_dotenv
 import datetime
 from iqoptionapi.stable_api import IQ_Option
 load_dotenv()
-
 
 API_ID = '12093312'
 API_HASH = '67926450017650430bfc865ad771523d'
@@ -34,6 +35,31 @@ if iq.check_connect() == True:
 else:
     print(datetime.datetime.now().strftime("%H:%M"))
     print("Erro ao logar. Tente novamente.")
+
+stoploss = 2
+stopwin = 2
+saldo = 0
+
+
+def check_win_loss(id_list, result, tipo_operacao):
+    global stoploss, stopwin, saldo
+
+    if tipo_operacao == 'binaria':
+        if iq.check_win_v3(id_list) != None:
+            print(result['par'])
+            print(result['direcao'])
+            print(result['horario'])
+            resultado_binaria = iq.check_win_v3(id_list)
+            print("resultado da operação: {:.2f}".format(resultado_binaria))
+            saldo += resultado_binaria
+    if tipo_operacao == 'digital':
+        print(result['par'])
+        print(result['direcao'])
+        print(result['horario'])
+        op_digital = iq.check_win_digital(id_list, 2)
+        print("resultado da operação: {:.2f}".format(op_digital))
+        saldo += op_digital
+    print("\nSaldo das operaçoes: {:.2f}".format(saldo))
 
 
 def loop_conexao():
@@ -102,22 +128,30 @@ def loop_conexao():
                         Money, ACTIVES, ACTION, expirations_mode)
                     if id_list == [None]:
                         print(datetime.datetime.now().strftime("%H:%M"))
-                        print(texto)
                         print(result)
-                        print("Operação falhou.")
-                        digital = iq.buy_digital_spot(
+                        print("Não foi possível entrar na binária.")
+                        print("Tentando entrar na digital.")
+                        _, id = iq.buy_digital_spot(
                             ACTIVES[0], Money[0], ACTION[0], expirations_mode[0])
-                        print("ID da operação:", digital)
+                        print("ID da operação:", id)
+                        tipo_operacao = 'digital'
+                        win_loss_thread = threading.Thread(
+                            target=check_win_loss, args=[id, result, tipo_operacao])
+                        win_loss_thread.start()
                     else:  # entra na operaçao
                         print('Entrando na operação...')
                         print(datetime.datetime.now().strftime("%H:%M"))
                         print(result)
                         print("ID da operação:", id_list[0])
+                        tipo_operacao = 'binaria'
                         print("\n")
+                        win_loss_thread = threading.Thread(
+                            target=check_win_loss, args=[id_list[0], result, tipo_operacao])
+                        win_loss_thread.start()
+
                 else:
                     print(datetime.datetime.now().strftime("%H:%M"))
-                    print(texto)
-                    print("Não tá no formato.")
+                    print("Mensagem não está no formato.")
 
         client.start()
         client.run_until_disconnected()
@@ -131,5 +165,3 @@ def run_loop_conexao():
 
 thread_conexao = threading.Thread(target=run_loop_conexao)
 thread_conexao.start()
-
-thread_conexao.join()
