@@ -22,8 +22,9 @@ password = os.getenv('senha')
 mensagem = ''
 msg = ''
 saldo = 0
-stoploss = 2
-stopwin = 1
+usargale = 0
+num_gales = 2
+multiplier = 2
 
 # Bot login
 iq = IQ_Option(email, password)
@@ -97,6 +98,80 @@ def check_win_loss(id_list, result, tipo_operacao):
             can_enter_trade = False
         print("\nSaldo das operações: {:.2f}\n".format(saldo))
 
+# Configurable Martingale Function
+
+
+def martingale(id_list, result, tipo_operacao, num_gales, multiplier):
+    global saldo, can_enter_trade
+
+    if tipo_operacao == 'binaria':
+        if iq.check_win_v3(id_list) is not None:
+            print(result['par'])
+            print(result['direcao'])
+            print(result['horario'])
+            resultado_binaria = iq.check_win_v3(id_list)
+            print("resultado da operação: {:.2f}".format(resultado_binaria))
+            saldo += resultado_binaria
+            stop_loss_reached = stop_loss_check(saldo, stoploss)
+            stop_win_reached = stop_win_check(saldo, stopwin)
+            if stop_loss_reached or stop_win_reached:
+                can_enter_trade = False
+            print("\nSaldo das operações: {:.2f}\n".format(saldo))
+        else:
+            print("Operação perdida.")
+            loss_amount = sum(id_list)
+            saldo -= loss_amount
+
+            for i in range(num_gales):
+                print(f"Martingale {i+1} - Multiplicador: {multiplier}")
+                id_list = iq.buy_multi(
+                    [loss_amount * multiplier], [result['par']], [result['direcao']], [1])
+                if id_list != [None]:
+                    print('Entrando na operação de Martingale...')
+                    print(datetime.datetime.now().strftime("%H:%M"))
+                    print(result)
+                    print("ID da operação:", id_list[0])
+                    print("\n")
+                    break
+                else:
+                    print(
+                        "Não foi possível entrar na operação de Martingale. Tentando novamente.")
+
+    elif tipo_operacao == 'digital':
+        if iq.check_win_digital_v2(id_list) is not None:
+            print(result['par'])
+            print(result['direcao'])
+            print(result['horario'])
+            resultado_digital = iq.check_win_digital_v2(id_list)
+            print("resultado da operação: {:.2f}".format(resultado_digital))
+            saldo += resultado_digital
+            stop_loss_reached = stop_loss_check(saldo, stoploss)
+            stop_win_reached = stop_win_check(saldo, stopwin)
+            if stop_loss_reached or stop_win_reached:
+                can_enter_trade = False
+            print("\nSaldo das operações: {:.2f}\n".format(saldo))
+        else:
+            print("Operação digital perdida.")
+            loss_amount = sum(id_list)
+            saldo -= loss_amount
+
+            for i in range(num_gales):
+                print(f"Martingale {i+1} - Multiplicador: {multiplier}")
+                _, id = iq.buy_digital_spot(
+                    result['par'], loss_amount * multiplier, result['direcao'], 1)
+                if id:
+                    print('Entrando na operação digital de Martingale...')
+                    print(datetime.datetime.now().strftime("%H:%M"))
+                    print(result)
+                    print("ID da operação:", id)
+                    print("\n")
+                    break
+                else:
+                    print(
+                        "Não foi possível entrar na operação digital de Martingale. Tentando novamente.")
+
+    print("\nSaldo das operações: {:.2f}".format(saldo))
+
 
 async def armazenar_mensagem(event):
     global mensagem
@@ -164,9 +239,14 @@ async def armazenar_mensagem(event):
                     ACTIVES[0], Money[0], ACTION[0], expirations_mode[0])
                 print("ID da operação:", id)
                 tipo_operacao = 'digital'
-                win_loss_thread = Thread(target=check_win_loss, args=[
-                                         id, result, tipo_operacao])
-                win_loss_thread.start()
+                if usargale == 0:
+                    win_loss_thread = Thread(target=check_win_loss, args=[
+                        id_list[0], result, tipo_operacao])
+                    win_loss_thread.start()
+                elif usargale == 1:
+                    win_loss_thread = Thread(target=martingale, args=[
+                        id_list[0], result, tipo_operacao,])
+                    win_loss_thread.start()
             else:  # Entra na operação
                 print('Entrando na operação...')
                 print(datetime.datetime.now().strftime("%H:%M"))
@@ -174,9 +254,14 @@ async def armazenar_mensagem(event):
                 print("ID da operação:", id_list[0])
                 tipo_operacao = 'binaria'
                 print("\n")
-                win_loss_thread = Thread(target=check_win_loss, args=[
-                                         id_list[0], result, tipo_operacao])
-                win_loss_thread.start()
+                if usargale == 0:
+                    win_loss_thread = Thread(target=check_win_loss, args=[
+                        id_list[0], result, tipo_operacao])
+                    win_loss_thread.start()
+                elif usargale == 1:
+                    win_loss_thread = Thread(target=martingale, args=[
+                        id_list[0], result, tipo_operacao,])
+                    win_loss_thread.start()
         else:
             print(datetime.datetime.now().strftime("%H:%M"))
             print("Mensagem não está no formato.")
