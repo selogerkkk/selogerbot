@@ -36,8 +36,8 @@ else:
     print(datetime.datetime.now().strftime("%H:%M"))
     print("Erro ao logar. Tente novamente.")
 
-stoploss = 2
-stopwin = 2
+stoploss = 20
+stopwin = 20
 saldo = 0
 
 
