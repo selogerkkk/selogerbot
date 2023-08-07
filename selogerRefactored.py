@@ -173,6 +173,16 @@ def martingale(id_list, result, tipo_operacao, num_gales, multiplier):
     print("\nSaldo das operações: {:.2f}".format(saldo))
 
 
+def verificar_maior_payout(par):
+    payout_binaria = iq.get_binary_option_detail()
+    payout_digital = iq.get_digital_payout(par)
+    print("payout binária:", payout_binaria[par]["turbo"])
+    if payout_binaria[par]["turbo"] > payout_digital(par):
+        return 'binaria', payout_binaria[par]["turbo"]
+    else:
+        return 'digital', payout_digital(par)
+
+
 async def armazenar_mensagem(event):
     global mensagem
     global msg
@@ -227,41 +237,49 @@ async def armazenar_mensagem(event):
             expirations_mode = []
             expirations_mode.append(duration)
 
-            # Operação
-            id_list = iq.buy_multi(
-                Money, ACTIVES, ACTION, expirations_mode)
-            if id_list == [None]:
-                print(datetime.datetime.now().strftime("%H:%M"))
-                print(result)
-                print("Não foi possível entrar na binária.")
-                print("Tentando entrar na digital.")
+            tipo_operacao1, payout_maior = verificar_maior_payout(par)
+            print(
+                f"Maior Payout: {payout_maior:.2f} - Tipo de Operação: {tipo_operacao}")
+            if tipo_operacao1 == 'binaria':
+                id_list = iq.buy_multi(
+                    Money, ACTIVES, ACTION, expirations_mode)
+                if id_list != [None]:
+                    print('Entrando na operação binária...')
+                    print(datetime.datetime.now().strftime("%H:%M"))
+                    print(result)
+                    print("ID da operação:", id_list[0])
+                    tipo_operacao = 'binaria'
+                    print("\n")
+                    check_win_loss_thread = Thread(target=check_win_loss, args=[
+                        id_list[0], result, tipo_operacao])
+                    check_win_loss_thread.start()
+                else:
+                    print(
+                        "Não foi possível entrar na operação binária.")
+
+            elif tipo_operacao == 'digital':
                 _, id = iq.buy_digital_spot(
                     ACTIVES[0], Money[0], ACTION[0], expirations_mode[0])
-                print("ID da operação:", id)
-                tipo_operacao = 'digital'
-                if usargale == 0:
-                    win_loss_thread = Thread(target=check_win_loss, args=[
-                        id_list[0], result, tipo_operacao])
-                    win_loss_thread.start()
-                elif usargale == 1:
-                    win_loss_thread = Thread(target=martingale, args=[
-                        id_list[0], result, tipo_operacao,])
-                    win_loss_thread.start()
-            else:  # Entra na operação
-                print('Entrando na operação...')
-                print(datetime.datetime.now().strftime("%H:%M"))
-                print(result)
-                print("ID da operação:", id_list[0])
-                tipo_operacao = 'binaria'
-                print("\n")
-                if usargale == 0:
-                    win_loss_thread = Thread(target=check_win_loss, args=[
-                        id_list[0], result, tipo_operacao])
-                    win_loss_thread.start()
-                elif usargale == 1:
-                    win_loss_thread = Thread(target=martingale, args=[
-                        id_list[0], result, tipo_operacao,])
-                    win_loss_thread.start()
+                if id:
+                    print('Entrando na operação digital...')
+                    print(datetime.datetime.now().strftime("%H:%M"))
+                    print(result)
+                    print("ID da operação:", id)
+                    tipo_operacao = 'digital'
+                    print("\n")
+                    check_win_loss_thread = Thread(target=check_win_loss, args=[
+                        id, result, tipo_operacao])
+                    check_win_loss_thread.start()
+                else:
+                    print("Não foi possível entrar na operação digital.")
+                # if usargale == 0:
+                #     win_loss_thread = Thread(target=check_win_loss, args=[
+                #         id_list[0], result, tipo_operacao])
+                #     win_loss_thread.start()
+                # elif usargale == 1:
+                #     win_loss_thread = Thread(target=martingale, args=[
+                #         id_list[0], result, tipo_operacao,])
+                #     win_loss_thread.start()
         else:
             print(datetime.datetime.now().strftime("%H:%M"))
             print("Mensagem não está no formato.")
