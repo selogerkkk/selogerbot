@@ -11,24 +11,32 @@ from iqoptionapi.stable_api import IQ_Option
 
 load_dotenv()
 
+# infos do telegram
 API_ID = '12093312'
 API_HASH = '67926450017650430bfc865ad771523d'
-# CHAT_ID = '-1001474420372'  # traderzismo
 CHAT_ID = '-1001864670859'
+# CHAT_ID = '-1001474420372'  # traderzismo
 
+# bot login
 email = os.getenv('email')
 password = os.getenv('senha')
+iq = IQ_Option(email, password)
+check, reason = iq.connect()
+
 
 mensagem = ''
 msg = ''
-saldo = 0
+saldobot = 0
+
+# gale
 usargale = 0
 num_gales = 2
 multiplier = 2
 
-# Bot login
-iq = IQ_Option(email, password)
-check, reason = iq.connect()  # connect to IQ Option
+# gerenciamento
+stoploss = 2
+stopwin = 2
+can_enter_trade = True
 
 
 def print_account_info():
@@ -38,20 +46,19 @@ def print_account_info():
     print("Conta conectada.")
     print("Bem-vindo de volta.")
     print("Você está na conta:", balance_mode)
-    print("Seu saldo é:", balance)
+    print("Seu saldo da conta é:", balance)
     print("\n")
-    return balance
 
 
-def stop_loss_check(saldo, stoploss):
-    if saldo <= -stoploss:
+def stop_loss_check(saldobot, stoploss):
+    if saldobot <= -stoploss:
         print("Stop Loss alcançado.")
         return True
     return False
 
 
-def stop_win_check(saldo, stopwin):
-    if saldo >= stopwin:
+def stop_win_check(saldobot, stopwin):
+    if saldobot >= stopwin:
         print("Stop Win alcançado.")
         return True
     return False
@@ -65,13 +72,9 @@ else:
     print("Erro ao logar. Tente novamente.")
     sys.exit()
 
-stoploss = 2
-stopwin = 2
-can_enter_trade = True
-
 
 def check_win_loss(id_list, result, tipo_operacao):
-    global saldo, can_enter_trade
+    global saldobot, can_enter_trade
     if tipo_operacao == 'binaria':
         resultado_binaria = iq.check_win_v3(id_list)
         if resultado_binaria is not None:
@@ -79,30 +82,30 @@ def check_win_loss(id_list, result, tipo_operacao):
             print(result['direcao'])
             print(result['horario'])
             print("Resultado da operação: {:.2f}".format(resultado_binaria))
-            saldo += resultado_binaria
-            stop_loss_reached = stop_loss_check(saldo, stoploss)
-            stop_win_reached = stop_win_check(saldo, stopwin)
+            saldobot += resultado_binaria
+            stop_loss_reached = stop_loss_check(saldobot, stoploss)
+            stop_win_reached = stop_win_check(saldobot, stopwin)
             if stop_loss_reached or stop_win_reached:
                 can_enter_trade = False
-            print("\nSaldo das operações: {:.2f}".format(saldo))
+            print("\nsaldobot das operações: {:.2f}".format(saldobot))
     elif tipo_operacao == 'digital':
         print(result['par'])
         print(result['direcao'])
         print(result['horario'])
         op_digital = iq.check_win_digital(id_list, 2)
         print("Resultado da operação: {:.2f}".format(op_digital))
-        saldo += op_digital
-        stop_loss_reached = stop_loss_check(saldo, stoploss)
-        stop_win_reached = stop_win_check(saldo, stopwin)
+        saldobot += op_digital
+        stop_loss_reached = stop_loss_check(saldobot, stoploss)
+        stop_win_reached = stop_win_check(saldobot, stopwin)
         if stop_loss_reached or stop_win_reached:
             can_enter_trade = False
-        print("\nSaldo das operações: {:.2f}\n".format(saldo))
+        print("\nSaldo das operações: {:.2f}\n".format(saldobot))
 
 # Configurable Martingale Function
 
 
 def martingale(id_list, result, tipo_operacao, num_gales, multiplier):
-    global saldo, can_enter_trade
+    global saldobot, can_enter_trade
 
     if tipo_operacao == 'binaria':
         if iq.check_win_v3(id_list) is not None:
@@ -111,16 +114,16 @@ def martingale(id_list, result, tipo_operacao, num_gales, multiplier):
             print(result['horario'])
             resultado_binaria = iq.check_win_v3(id_list)
             print("resultado da operação: {:.2f}".format(resultado_binaria))
-            saldo += resultado_binaria
-            stop_loss_reached = stop_loss_check(saldo, stoploss)
-            stop_win_reached = stop_win_check(saldo, stopwin)
+            saldobot += resultado_binaria
+            stop_loss_reached = stop_loss_check(saldobot, stoploss)
+            stop_win_reached = stop_win_check(saldobot, stopwin)
             if stop_loss_reached or stop_win_reached:
                 can_enter_trade = False
-            print("\nSaldo das operações: {:.2f}\n".format(saldo))
+            print("\nSaldo das operações: {:.2f}\n".format(saldobot))
         else:
             print("Operação perdida.")
             loss_amount = sum(id_list)
-            saldo -= loss_amount
+            saldobot -= loss_amount
 
             for i in range(num_gales):
                 print(f"Martingale {i+1} - Multiplicador: {multiplier}")
@@ -144,16 +147,16 @@ def martingale(id_list, result, tipo_operacao, num_gales, multiplier):
             print(result['horario'])
             resultado_digital = iq.check_win_digital_v2(id_list)
             print("resultado da operação: {:.2f}".format(resultado_digital))
-            saldo += resultado_digital
-            stop_loss_reached = stop_loss_check(saldo, stoploss)
-            stop_win_reached = stop_win_check(saldo, stopwin)
+            saldobot += resultado_digital
+            stop_loss_reached = stop_loss_check(saldobot, stoploss)
+            stop_win_reached = stop_win_check(saldobot, stopwin)
             if stop_loss_reached or stop_win_reached:
                 can_enter_trade = False
-            print("\nSaldo das operações: {:.2f}\n".format(saldo))
+            print("\nSaldo das operações: {:.2f}\n".format(saldobot))
         else:
             print("Operação digital perdida.")
             loss_amount = sum(id_list)
-            saldo -= loss_amount
+            saldobot -= loss_amount
 
             for i in range(num_gales):
                 print(f"Martingale {i+1} - Multiplicador: {multiplier}")
@@ -170,17 +173,20 @@ def martingale(id_list, result, tipo_operacao, num_gales, multiplier):
                     print(
                         "Não foi possível entrar na operação digital de Martingale. Tentando novamente.")
 
-    print("\nSaldo das operações: {:.2f}".format(saldo))
+    print("\nSaldo  das operações: {:.2f}".format(saldobot))
 
 
 def verificar_maior_payout(par):
     payout_binaria = iq.get_binary_option_detail()
     payout_digital = iq.get_digital_payout(par)
-    print("payout binária:", payout_binaria[par]["turbo"])
-    if payout_binaria[par]["turbo"] > payout_digital(par):
-        return 'binaria', payout_binaria[par]["turbo"]
+    paybinariaf = payout_binaria[par]["turbo"]["option"]["profit"]["commission"]
+    paybinaria = 100-paybinariaf
+    print("payout binária:", paybinaria)
+    print("payout digital:", payout_digital)
+    if (paybinaria) > payout_digital:
+        return 'binaria', paybinaria
     else:
-        return 'digital', payout_digital(par)
+        return 'digital', payout_digital
 
 
 async def armazenar_mensagem(event):
@@ -237,10 +243,10 @@ async def armazenar_mensagem(event):
             expirations_mode = []
             expirations_mode.append(duration)
 
-            tipo_operacao1, payout_maior = verificar_maior_payout(par)
+            tipo_operacao, payout_maior = verificar_maior_payout(par)
             print(
                 f"Maior Payout: {payout_maior:.2f} - Tipo de Operação: {tipo_operacao}")
-            if tipo_operacao1 == 'binaria':
+            if tipo_operacao == 'binaria':
                 id_list = iq.buy_multi(
                     Money, ACTIVES, ACTION, expirations_mode)
                 if id_list != [None]:
