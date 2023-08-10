@@ -78,10 +78,8 @@ def check_win_loss(id_list, result, tipo_operacao):
     if tipo_operacao == 'binaria':
         resultado_binaria = iq.check_win_v3(id_list)
         if resultado_binaria is not None:
-            print(result['par'])
-            print(result['direcao'])
-            print(result['horario'])
-            print("Resultado da operação: {:.2f}".format(resultado_binaria))
+            print("par: {}\ndirecao: {}\nhorario: {}\nResultado da operação: {:.2f}".format(
+                result['par'], result['direcao'], result['horario'], resultado_binaria))
             saldobot += resultado_binaria
             stop_loss_reached = stop_loss_check(saldobot, stoploss)
             stop_win_reached = stop_win_check(saldobot, stopwin)
@@ -89,9 +87,8 @@ def check_win_loss(id_list, result, tipo_operacao):
                 can_enter_trade = False
             print("\nsaldobot das operações: {:.2f}".format(saldobot))
     elif tipo_operacao == 'digital':
-        print(result['par'])
-        print(result['direcao'])
-        print(result['horario'])
+        print("par: {}\ndirecao: {}\nhorario: {}\nResultado da operação: {:.2f}".format(
+            result['par'], result['direcao'], result['horario'], op_digital))
         op_digital = iq.check_win_digital(id_list, 2)
         print("Resultado da operação: {:.2f}".format(op_digital))
         saldobot += op_digital
