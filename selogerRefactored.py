@@ -87,10 +87,9 @@ def check_win_loss(id_list, result, tipo_operacao):
                 can_enter_trade = False
             print("\nsaldobot das operações: {:.2f}".format(saldobot))
     elif tipo_operacao == 'digital':
+        op_digital = iq.check_win_digital(id_list, 2)
         print("par: {}\ndirecao: {}\nhorario: {}\nResultado da operação: {:.2f}".format(
             result['par'], result['direcao'], result['horario'], op_digital))
-        op_digital = iq.check_win_digital(id_list, 2)
-        print("Resultado da operação: {:.2f}".format(op_digital))
         saldobot += op_digital
         stop_loss_reached = stop_loss_check(saldobot, stoploss)
         stop_win_reached = stop_win_check(saldobot, stopwin)
