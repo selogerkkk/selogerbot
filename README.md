@@ -2,7 +2,9 @@
 
 # Projeto de Automação de Trading
 
-Este documento fornece uma documentação completa para o projeto de automação de trading baseado no código Python fornecido. O projeto utiliza as bibliotecas Telethon e IQ Option API para automatizar operações de trading em opções binárias e digitais. O objetivo principal é receber sinais de trading do Telegram, interpretá-los e executar automaticamente as operações de acordo com os sinais recebidos.
+Este documento fornece uma documentação completa para o meu bot de automação de trading baseado em Python. O projeto utiliza as bibliotecas Telethon e IQ Option API para automatizar operações de trading em opções binárias e digitais. O objetivo principal é receber sinais de trading do Telegram, interpretá-los e executar automaticamente as operações de acordo com os sinais recebidos.
+
+!!projeto de estudo!!
 
 ## Índice
 
