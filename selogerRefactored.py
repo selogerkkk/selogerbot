@@ -12,8 +12,8 @@ from iqoptionapi.stable_api import IQ_Option
 load_dotenv()
 
 # infos do telegram
-API_ID = '12093312'
-API_HASH = '67926450017650430bfc865ad771523d'
+API_ID = os.getenv('API_ID')
+API_HASH = os.getenv('API_HASH')
 CHAT_ID = '-1001864670859'
 # CHAT_ID = '-1001474420372'  # traderzismo
 
