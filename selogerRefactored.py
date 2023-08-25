@@ -34,8 +34,8 @@ num_gales = 2
 multiplier = 2
 
 # gerenciamento
-stoploss = 2
-stopwin = 2
+stoploss = 1000
+stopwin = 1000
 can_enter_trade = True
 
 
@@ -175,21 +175,56 @@ def martingale(id_list, result, tipo_operacao, num_gales, multiplier):
 def verificar_maior_payout(par):
     payout_binaria = iq.get_binary_option_detail()
     payout_digital = iq.get_digital_payout(par)
-    paybinariaf = payout_binaria[par]["turbo"]["option"]["profit"]["commission"]
-    paybinaria = 100-paybinariaf
+    if par in payout_binaria and "turbo" in payout_binaria[par] and "option" in payout_binaria[par]["turbo"] and \
+       "profit" in payout_binaria[par]["turbo"]["option"] and "commission" in payout_binaria[par]["turbo"]["option"]["profit"]:
+        paybinariaf = payout_binaria[par]["turbo"]["option"]["profit"]["commission"]
+        paybinaria = 100 - paybinariaf
+    else:
+        paybinaria = 0
+
     print("payout binária:", paybinaria)
     print("payout digital:", payout_digital)
-    if (paybinaria) > payout_digital:
-        return 'binaria', paybinaria
+    if not paybinaria and not payout_digital:
+        return 'nenhum', None
     else:
-        return 'digital', payout_digital
+        if paybinaria > payout_digital:
+            return 'binaria', paybinaria
+        else:
+            return 'digital', payout_digital
+
+
+def op_binaria():
+    id_list = iq.buy_multi(
+        Money, ACTIVES, ACTION, expirations_mode)
+    if id_list != [None]:
+        if isinstance(id_list[0], int):
+            print('Entrando na operação binária...')
+            print(datetime.datetime.now().strftime("%H:%M"))
+            print(result)
+            print("ID da operação:", id_list[0])
+            tipo_operacao = 'binaria'
+            print("\n")
+            check_win_loss_thread = Thread(target=check_win_loss, args=[
+                id_list[0], result, tipo_operacao])
+            check_win_loss_thread.start()
+        else:
+            print("par fechado/não existe")
+    else:
+        print(
+            "Não foi possível entrar na operação binária.")
 
 
 async def armazenar_mensagem(event):
     global mensagem
     global msg
     global can_enter_trade
-
+    global amount
+    global duration
+    global Money
+    global ACTIVES
+    global ACTION
+    global expirations_mode
+    global result
     if event.is_group and str(event.chat_id) == CHAT_ID:
         texto = event.message.text
         result = {}
@@ -230,7 +265,7 @@ async def armazenar_mensagem(event):
                 horario = datetime.datetime.now().strftime("%H:%M")
             result['horario'] = horario
 
-            amount = 1
+            amount = 5
             duration = 1
 
             Money = [amount]
@@ -243,21 +278,7 @@ async def armazenar_mensagem(event):
             print(
                 f"Maior Payout: {payout_maior:.2f} - Tipo de Operação: {tipo_operacao}")
             if tipo_operacao == 'binaria':
-                id_list = iq.buy_multi(
-                    Money, ACTIVES, ACTION, expirations_mode)
-                if id_list != [None]:
-                    print('Entrando na operação binária...')
-                    print(datetime.datetime.now().strftime("%H:%M"))
-                    print(result)
-                    print("ID da operação:", id_list[0])
-                    tipo_operacao = 'binaria'
-                    print("\n")
-                    check_win_loss_thread = Thread(target=check_win_loss, args=[
-                        id_list[0], result, tipo_operacao])
-                    check_win_loss_thread.start()
-                else:
-                    print(
-                        "Não foi possível entrar na operação binária.")
+                op_binaria()
 
             elif tipo_operacao == 'digital':
                 _, id = iq.buy_digital_spot(
@@ -267,8 +288,14 @@ async def armazenar_mensagem(event):
                     print(datetime.datetime.now().strftime("%H:%M"))
                     print(result)
                     print("ID da operação:", id)
-                    tipo_operacao = 'digital'
-                    print("\n")
+                    if 'message' in id and id['message'] == 'active_suspended: rejected by risks':
+                        print(
+                            "operação rejeitada, provavelmente nao existe na digital, erro de API", id['code'])
+                        print("\n")
+                        print("tentando entrar na binaria")
+                        op_binaria()
+                        return
+
                     check_win_loss_thread = Thread(target=check_win_loss, args=[
                         id, result, tipo_operacao])
                     check_win_loss_thread.start()
@@ -282,6 +309,8 @@ async def armazenar_mensagem(event):
                 #     win_loss_thread = Thread(target=martingale, args=[
                 #         id_list[0], result, tipo_operacao,])
                 #     win_loss_thread.start()
+            elif tipo_operacao == 'nenhum':
+                print("par indisponivel")
         else:
             print(datetime.datetime.now().strftime("%H:%M"))
             print("Mensagem não está no formato.")
