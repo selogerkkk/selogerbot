@@ -77,4 +77,4 @@ Substitua `selogerRefactored.py` pelo nome do arquivo que contém o código.
 
 ## Aviso Legal <a name="aviso-legal"></a>
 
-Este projeto é fornecido apenas para fins educacionais e informativos. A negociação de ativos financeiros, como opções binárias e digitais, envolve riscos substanciais. Você deve entender os riscos e considerar cuidadosamente suas decisões de investimento. O autor e a OpenAI não assumem qualquer responsabilidade por perdas ou danos decorrentes do uso deste projeto. Use por sua própria conta e risco. Sempre faça sua própria pesquisa e consulte profissionais financeiros antes de tomar decisões de investimento.
+Este projeto é fornecido apenas para fins educacionais e informativos. A negociação de ativos financeiros, como opções binárias e digitais, envolve riscos substanciais. Você deve entender os riscos e considerar cuidadosamente suas decisões de investimento. O autor e não assume qualquer responsabilidade por perdas ou danos decorrentes do uso deste projeto. Use por sua própria conta e risco. Sempre faça sua própria pesquisa e consulte profissionais financeiros antes de tomar decisões de investimento.
