@@ -104,7 +104,7 @@ def check_win_loss(id_list, result, tipo_operacao):
         else:
             placarwin += 1
 
-        print("Placar atual:", placarwin, "x", placarloss)
+        print("Placar atual:", placarwin, "x", placarloss, "\n")
         saldobot += op_digital
         stop_loss_reached = stop_loss_check(saldobot, stoploss)
         stop_win_reached = stop_win_check(saldobot, stopwin)
@@ -124,7 +124,8 @@ def martingale(id_list, result, tipo_operacao, num_gales, multiplier):
             print(result['direcao'])
             print(result['horario'])
             resultado_binaria = iq.check_win_v3(id_list)
-            print("resultado da operação: {:.2f}".format(resultado_binaria))
+            print("resultado da operação: {:.2f}".format(
+                resultado_binaria), "\n")
             saldobot += resultado_binaria
             stop_loss_reached = stop_loss_check(saldobot, stoploss)
             stop_win_reached = stop_win_check(saldobot, stopwin)
@@ -182,7 +183,7 @@ def martingale(id_list, result, tipo_operacao, num_gales, multiplier):
                     break
                 else:
                     print(
-                        "Não foi possível entrar na operação digital de Martingale. Tentando novamente.")
+                        "Não foi possível entrar na operação digital de Martingale. Tentando novamente.\n")
 
     print("\nSaldo  das operações: {:.2f}".format(saldobot))
 
@@ -236,7 +237,7 @@ def op_digital():
         print('Entrando na operação digital...')
         print(datetime.datetime.now().strftime("%H:%M"))
         print(result)
-        if id != int(id):
+        if not isinstance(id, int):
             if 'code' in id and id['code'] == 'error_place_digital_order':
                 print(
                     "operação rejeitada, provavelmente nao existe na digital, erro de API", id['code'])
@@ -251,7 +252,7 @@ def op_digital():
                 id, result, tipo_operacao])
             check_win_loss_thread.start()
     else:
-        print("Não foi possível entrar na operação digital.")
+        print("\nNão foi possível entrar na operação digital.")
 
 
 async def armazenar_mensagem(event):
