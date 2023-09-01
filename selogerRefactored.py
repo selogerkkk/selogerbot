@@ -37,6 +37,8 @@ multiplier = 2
 stoploss = 2
 stopwin = 2
 can_enter_trade = True
+placarwin = 0
+placarloss = 0
 
 
 def print_account_info():
@@ -74,12 +76,18 @@ else:
 
 
 def check_win_loss(id_list, result, tipo_operacao):
-    global saldobot, can_enter_trade
+    global saldobot, can_enter_trade, placarloss, placarwin
     if tipo_operacao == 'binaria':
         resultado_binaria = iq.check_win_v3(id_list)
         if resultado_binaria is not None:
             print("par: {}\ndirecao: {}\nhorario: {}\nResultado da operação: {:.2f}".format(
                 result['par'], result['direcao'], result['horario'], resultado_binaria))
+            if (resultado_binaria < 0):
+                placarloss += 1
+            else:
+                placarwin += 1
+
+            print("Placar atual:", placarwin, "x", placarloss)
             saldobot += resultado_binaria
             stop_loss_reached = stop_loss_check(saldobot, stoploss)
             stop_win_reached = stop_win_check(saldobot, stopwin)
@@ -90,6 +98,12 @@ def check_win_loss(id_list, result, tipo_operacao):
         op_digital = iq.check_win_digital(id_list, 2)
         print("par: {}\ndirecao: {}\nhorario: {}\nResultado da operação: {:.2f}".format(
             result['par'], result['direcao'], result['horario'], op_digital))
+        if (op_digital < 0):
+            placarloss += 1
+        else:
+            placarwin += 1
+
+        print("Placar atual:", placarwin, "x", placarloss)
         saldobot += op_digital
         stop_loss_reached = stop_loss_check(saldobot, stoploss)
         stop_win_reached = stop_win_check(saldobot, stopwin)
