@@ -15,7 +15,7 @@ load_dotenv()
 API_ID = os.getenv('API_ID')
 API_HASH = os.getenv('API_HASH')
 CHAT_ID = '-1001864670859'
-# CHAT_ID = '-1001474420372'  # traderzismo
+# CHAT_ID = '-1001474420372'  # t raderzismo
 
 # bot login
 email = os.getenv('email')
@@ -222,13 +222,14 @@ def op_digital():
         print('Entrando na operação digital...')
         print(datetime.datetime.now().strftime("%H:%M"))
         print(result)
-        if 'code' in id and id['code'] == 'error_place_digital_order':
-            print(
-                "operação rejeitada, provavelmente nao existe na digital, erro de API", id['code'])
-            print("\n")
-            print("tentando entrar na binaria")
-            op_binaria()
-            return
+        if id != int(id):
+            if 'code' in id and id['code'] == 'error_place_digital_order':
+                print(
+                    "operação rejeitada, provavelmente nao existe na digital, erro de API", id['code'])
+                print("\n")
+                print("tentando entrar na binaria")
+                op_binaria()
+                return
         else:
             print("ID da operação:", id)
             tipo_operacao = 'digital'
