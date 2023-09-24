@@ -11,9 +11,9 @@ import sys
 load_dotenv()
 
 # Telegram API Infos
-API_ID = '12093312'
-API_HASH = '67926450017650430bfc865ad771523d'
-CHAT_ID = '-1001864670859'
+API_ID = os.getenv('API_ID')
+API_HASH = os.getenv('API_HASH')
+CHAT_ID = os.getenv('CHAT_ID')
 # CHAT_ID = '-1001474420372'  # traderzismo
 
 # Bot Login

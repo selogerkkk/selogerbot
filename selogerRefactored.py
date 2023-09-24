@@ -14,8 +14,7 @@ load_dotenv()
 # infos do telegram
 API_ID = os.getenv('API_ID')
 API_HASH = os.getenv('API_HASH')
-CHAT_ID = '-1001864670859'
-# CHAT_ID = '-1001474420372'  # t raderzismo
+CHAT_ID = os.getenv('CHAT_ID')
 
 # bot login
 email = os.getenv('email')
